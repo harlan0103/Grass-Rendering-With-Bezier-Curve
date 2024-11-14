@@ -1,4 +1,8 @@
 # Grass-Rendering-With-Bezier-Curve
+#### Unity Version: 2022.3.8f1 LTS
+
+#### URP Version: 14.0.8
+
 Grass Rendering in Unity inspired by Ghost of Tsushima GDC talk.
 
 Features implemented:
