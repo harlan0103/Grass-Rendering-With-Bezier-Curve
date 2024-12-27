@@ -1,5 +1,6 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel CSMain
+#pragma kernel UpdateArgsBuffer
 
 #include "Simplex.compute"
 
@@ -12,6 +13,10 @@ struct Blade
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
 AppendStructuredBuffer<Blade> _BladeGrassBuffer;
+RWStructuredBuffer<uint> _BladeGrassCntBuffer;
+RWStructuredBuffer<uint> _BladeGrassArgsBuffer;
+
+uint _MeshInsanceIndex;
 
 float3 _CamPosInWorldSpace;
 float _DistanceCullingThreshold;
@@ -173,5 +178,16 @@ void CSMain(uint3 id : SV_DispatchThreadID)
         blade.windOffset = windOffset;
         
         _BladeGrassBuffer.Append(blade);
+        InterlockedAdd(_BladeGrassCntBuffer[0], 1);
     }
+}
+
+[numthreads(1, 1, 1)]
+void UpdateArgsBuffer(uint3 id : SV_DispatchThreadID)
+{
+    _BladeGrassArgsBuffer[0] = _MeshInsanceIndex;
+    _BladeGrassArgsBuffer[1] = _BladeGrassCntBuffer[0];
+    _BladeGrassArgsBuffer[2] = 0;
+    _BladeGrassArgsBuffer[3] = 0;
+    _BladeGrassArgsBuffer[4] = 0;
 }
